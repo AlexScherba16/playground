@@ -29,8 +29,9 @@ Well, that's it. Cool, right?🤓 You can continue reading 👇
 * [internal/](internal) - internal packages that are not intended for external use
 * * [internal/cli](internal/cli) - cli parser entity and tests
 * * [internal/constants](internal/constants) - project constant variables
+* * [internal/types](internal/types) - structures and channels types for internal usage across the project
 * * [internal/utils](internal/utils) - utility functions and helpers for internal usage across the project
-* * [internal/utils/cerror](internal/utils/cerror) - custom error handler, provides common error message template
+* * * [internal/utils/cerror](internal/utils/cerror) - custom error handler, provides common error message template
 
 ## 🏗 Build & Run
 
