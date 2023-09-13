@@ -30,6 +30,10 @@ func TestNewAggregator(t *testing.T) {
 			name:      "AggregateCampaignParameter",
 			aggregate: cnst.AggregateCampaign,
 		},
+		{
+			name:      "AggregateCountryParameter",
+			aggregate: cnst.AggregateCountry,
+		},
 	}
 
 	for _, testCase := range tests {
