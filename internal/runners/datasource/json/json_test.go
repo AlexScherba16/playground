@@ -16,7 +16,7 @@ import (
 
 const (
 	NoExFile        = "no_Json_no_ExistFile"
-	InvalidJsonFile = "tmp.inv.*.abc.*.json"
+	InvalidJsonFile = "tmp.inv.abc.*.json"
 	ValidJsonFile   = "tmp.*.json"
 )
 

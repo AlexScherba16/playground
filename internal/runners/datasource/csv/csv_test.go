@@ -16,7 +16,7 @@ import (
 
 const (
 	NoExFile       = "no_no_no_ExistFile"
-	InvalidCsvFile = "tmp.inv.*.abc.*.csv"
+	InvalidCsvFile = "tmp.inv.abc.*.csv"
 	ValidCsvFile   = "tmp.*.csv"
 )
 
