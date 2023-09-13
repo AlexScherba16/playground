@@ -2,23 +2,24 @@ package campaign
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
 	cnst "playground/internal/constants"
 	t "playground/internal/types"
 	"playground/internal/utils/cerror"
 	"sync"
+
+	log "github.com/sirupsen/logrus"
 )
 
 // campaignAggregator represents a data aggregator backed by a "campaign" aggregate parameter
 type campaignAggregator struct {
-	wg           *sync.WaitGroup
-	aggregate    string
-	recordCh     t.RecordChannel
-	aggregatedCh t.AggregateChannel
+	wg          *sync.WaitGroup
+	aggregate   string
+	recordCh    t.RecordChannel
+	aggregateCh t.AggregateChannel
 }
 
 // NewAggregator initializes and returns campaignAggregator
-// Returns error if some of wg, recordCh, aggregatedCh is nil, or invalid aggregate parameter
+// Returns error if some of wg, recordCh, aggregateCh is nil, or invalid aggregate parameter
 func NewAggregator(
 	wg *sync.WaitGroup,
 	aggregate string,
@@ -40,16 +41,16 @@ func NewAggregator(
 	}
 
 	return &campaignAggregator{
-		wg:           wg,
-		aggregate:    aggregate,
-		recordCh:     recordCh,
-		aggregatedCh: aggregateCh,
+		wg:          wg,
+		aggregate:   aggregate,
+		recordCh:    recordCh,
+		aggregateCh: aggregateCh,
 	}, nil
 }
 
 // Run interface implementation, related to campaign aggregation logic
 func (r *campaignAggregator) Run() {
-	defer close(r.aggregatedCh)
+	defer close(r.aggregateCh)
 	defer r.wg.Done()
 
 	// Read records until record channel is open
@@ -59,13 +60,13 @@ func (r *campaignAggregator) Run() {
 			log.Warning("campaign aggregator shutdown")
 
 			// Notify next runner about cancel event
-			r.aggregatedCh <- nil
+			r.aggregateCh <- nil
 			return
 		}
 
 		// Send aggregated data to next runner
 		aggregatedData := t.NewAggregatedData(t.KeyType(record.CampaignId()), record.Ltv())
-		r.aggregatedCh <- aggregatedData
+		r.aggregateCh <- aggregatedData
 	}
 	log.Debug("campaign aggregator finished work")
 }

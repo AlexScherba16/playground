@@ -24,18 +24,28 @@ func NewAggregateChannel(aggregatedBuffer uint) AggregateChannel {
 	return make(AggregateChannel, aggregatedBuffer)
 }
 
+// PredictChannel is a channel type for transmitting PredictedData instances
+type PredictChannel chan *PredictedData
+
+// NewPredictChannel initializes and returns PredictChannel with a buffer size
+func NewPredictChannel(predictBuffer uint) PredictChannel {
+	return make(PredictChannel, predictBuffer)
+}
+
 // Channels is channel container util
 type Channels struct {
 	RecordCh    RecordChannel
 	ErrorCh     ErrorChannel
 	AggregateCh AggregateChannel
+	PredictCh   PredictChannel
 }
 
 // NewChannels initializes and returns a Channels structure
-func NewChannels(recordsBuffer, errorsBuffer, aggregateBuffer uint) *Channels {
+func NewChannels(recordsBuffer, errorsBuffer, aggregateBuffer, predictBuffer uint) *Channels {
 	return &Channels{
 		RecordCh:    NewRecordChannel(recordsBuffer),
 		ErrorCh:     NewErrorChannel(errorsBuffer),
 		AggregateCh: NewAggregateChannel(aggregateBuffer),
+		PredictCh:   NewPredictChannel(predictBuffer),
 	}
 }

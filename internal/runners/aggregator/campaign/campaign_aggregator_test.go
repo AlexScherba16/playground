@@ -27,7 +27,7 @@ type newAggregatorResult struct {
 	err        error
 }
 
-func TestTestNewAggregator_InvalidInputParams(t *testing.T) {
+func TestNewAggregator_InvalidInputParams(t *testing.T) {
 	tests := []struct {
 		name           string
 		input          inputParameters
@@ -90,7 +90,7 @@ func TestTestNewAggregator_InvalidInputParams(t *testing.T) {
 	}
 }
 
-func TestTestNewAggregator_ValidInputParams(t *testing.T) {
+func TestNewAggregator_ValidInputParams(t *testing.T) {
 	/* ARRANGE */
 	in := inputParameters{
 		&s.WaitGroup{},
@@ -112,7 +112,7 @@ func TestTestNewAggregator_ValidInputParams(t *testing.T) {
 	}
 }
 
-func TestTestNewAggregator_RunReadRecordsChannel(t *testing.T) {
+func TestNewAggregator_RunReadRecordsChannel(t *testing.T) {
 	/* ARRANGE */
 	in := inputParameters{
 		&s.WaitGroup{},
@@ -174,7 +174,7 @@ func TestTestNewAggregator_RunReadRecordsChannel(t *testing.T) {
 	}
 }
 
-func TestTestNewAggregator_RunReadCancelEventFromRecordsChannel(t *testing.T) {
+func TestNewAggregator_RunReadCancelEventFromRecordsChannel(t *testing.T) {
 	/* ARRANGE */
 	in := inputParameters{
 		&s.WaitGroup{},
