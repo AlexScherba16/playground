@@ -125,7 +125,7 @@ func TestNewFlags(t *testing.T) {
 
 			// Assert result
 			if flags != testCase.expectedResult {
-				t.Errorf("NewFlags() with args %v: expected %v, got %v", testCase.args, testCase.expectedResult, flags)
+				t.Fatalf("NewFlags() with args %v: expected %v, got %v", testCase.args, testCase.expectedResult, flags)
 			}
 		})
 	}
