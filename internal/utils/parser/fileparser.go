@@ -25,3 +25,16 @@ func NewRecordFromCsvStrings(row []string) (*types.Record, error) {
 	}
 	return types.NewRecord(row[cnst.CsvCampaignIdPosition], row[cnst.CsvCountryPosition], ltvs), nil
 }
+
+// NewRecordFromJsonStruct creates a new Record from a JSON struct.
+func NewRecordFromJsonStruct(jsonData *types.JsonFileData) *types.Record {
+	return types.NewRecord(jsonData.CampaignId, jsonData.Country, types.LtvCollection{
+		jsonData.Ltv1,
+		jsonData.Ltv2,
+		jsonData.Ltv3,
+		jsonData.Ltv4,
+		jsonData.Ltv5,
+		jsonData.Ltv6,
+		jsonData.Ltv7,
+	})
+}
