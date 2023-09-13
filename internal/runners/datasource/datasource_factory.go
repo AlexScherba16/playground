@@ -8,6 +8,7 @@ import (
 	cnst "playground/internal/constants"
 	"playground/internal/runners/common"
 	"playground/internal/runners/datasource/csv"
+	"playground/internal/runners/datasource/json"
 	t "playground/internal/types"
 	"playground/internal/utils/cerror"
 	"sync"
@@ -34,6 +35,8 @@ func NewDataSource(
 	switch ext {
 	case cnst.CsvDataSource:
 		return csv.NewDataSource(ctx, wg, filePath, recordCh, errorCh)
+	case cnst.JsonDataSource:
+		return json.NewDataSource(ctx, wg, filePath, recordCh, errorCh)
 	default:
 		return nil, cerror.NewCustomError(fmt.Sprintf("%q invalid data source type extension", ext))
 	}

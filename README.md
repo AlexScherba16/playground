@@ -33,6 +33,7 @@ Well, that's it. Cool, right?🤓 You can continue reading 👇
 * * * [internal/runners/common](internal/runners/common) - common runners interface
 * * * [internal/runners/datasource](internal/runners/datasource) - data pipeline entry point, it provides records(raw data) to other runners
 * * * * [internal/runners/datasource/csv](internal/runners/datasource/csv) - csv file runner implementation and tests
+* * * * [internal/runners/datasource/json](internal/runners/datasource/json) - json file runner implementation and tests
 * [internal/types](internal/types) - structures and channels types for internal usage across the project
 * * [internal/utils](internal/utils) - utility functions and helpers for internal usage across the project
 * * * [internal/utils/cerror](internal/utils/cerror) - custom error handler, provides common error message template

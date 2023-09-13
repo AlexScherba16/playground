@@ -15,6 +15,7 @@ const (
 	NoExFile           = "NoExistFile"
 	UnsupportedFileExt = "*.acb"
 	ValidCsvFile       = "tmp.*.csv"
+	ValidJsonFile      = "tmp.*.json"
 )
 
 func TestNewDataSource(t *testing.T) {
@@ -24,6 +25,12 @@ func TestNewDataSource(t *testing.T) {
 		t.Fatalf("Failed to create tmp csv file data [%s]", err.Error())
 	}
 	defer os.Remove(validCsvFile.Name())
+
+	validJsonFile, err := os.CreateTemp("", ValidJsonFile)
+	if err != nil {
+		t.Fatalf("Failed to create tmp csv file data [%s]", err.Error())
+	}
+	defer os.Remove(validJsonFile.Name())
 
 	unsupportedFile, _ := os.CreateTemp("", UnsupportedFileExt)
 	if err != nil {
@@ -53,6 +60,10 @@ func TestNewDataSource(t *testing.T) {
 		{
 			name:     "ValidCsvFile",
 			filePath: validCsvFile.Name(),
+		},
+		{
+			name:     "ValidJsonFile",
+			filePath: validJsonFile.Name(),
 		},
 	}
 
