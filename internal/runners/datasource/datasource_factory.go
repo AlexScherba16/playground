@@ -14,7 +14,8 @@ import (
 	"sync"
 )
 
-// NewDataSource creates a new data source for processing
+// NewDataSource creates a new data source runner to stream data
+// In data processing pipeline
 func NewDataSource(
 	ctx context.Context,
 	wg *sync.WaitGroup,

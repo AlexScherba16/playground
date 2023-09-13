@@ -16,16 +16,26 @@ func NewErrorChannel(errorsBuffer uint) ErrorChannel {
 	return make(ErrorChannel, errorsBuffer)
 }
 
+// AggregateChannel is a channel type for transmitting AggregatedData instances
+type AggregateChannel chan *AggregatedData
+
+// NewAggregateChannel initializes and returns AggregateChannel with a buffer size
+func NewAggregateChannel(aggregatedBuffer uint) AggregateChannel {
+	return make(AggregateChannel, aggregatedBuffer)
+}
+
 // Channels is channel container util
 type Channels struct {
-	RecordCh RecordChannel
-	ErrorCh  ErrorChannel
+	RecordCh    RecordChannel
+	ErrorCh     ErrorChannel
+	AggregateCh AggregateChannel
 }
 
 // NewChannels initializes and returns a Channels structure
-func NewChannels(recordsBuffer, errorsBuffer uint) *Channels {
+func NewChannels(recordsBuffer, errorsBuffer, aggregateBuffer uint) *Channels {
 	return &Channels{
-		RecordCh: make(RecordChannel, recordsBuffer),
-		ErrorCh:  make(ErrorChannel, errorsBuffer),
+		RecordCh:    NewRecordChannel(recordsBuffer),
+		ErrorCh:     NewErrorChannel(errorsBuffer),
+		AggregateCh: NewAggregateChannel(aggregateBuffer),
 	}
 }
