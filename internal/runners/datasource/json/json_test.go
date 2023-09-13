@@ -1,43 +1,52 @@
-package csv
+package json
 
 import (
 	c "context"
+	"encoding/json"
 	"fmt"
 	"os"
 	tp "playground/internal/types"
 	"playground/internal/utils/cerror"
 	"playground/internal/utils/parser"
 	"reflect"
-	"strings"
 	s "sync"
 	"testing"
 	"time"
 )
 
 const (
-	NoExFile       = "no_no_no_ExistFile"
-	InvalidCsvFile = "tmp.inv.*.abc.*.csv"
-	ValidCsvFile   = "tmp.*.csv"
+	NoExFile        = "no_Json_no_ExistFile"
+	InvalidJsonFile = "tmp.inv.*.abc.*.json"
+	ValidJsonFile   = "tmp.*.json"
 )
 
-func createTempCSV(fileName string, data []string) (*os.File, error) {
+func createTempJSON(fileName string, data interface{}) (*os.File, error) {
 	f, err := os.CreateTemp("", fileName)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create temp csv file: %w", err)
+		return nil, fmt.Errorf("failed to create temp sjon file: %w", err)
 	}
 
-	// Write data to the temporary file
-	for _, line := range data {
-		if _, err := f.WriteString(line); err != nil {
-			return nil, fmt.Errorf("failed to write to temp csv file: %w", err)
-		}
+	// Encode data to json and store to file
+	encoder := json.NewEncoder(f)
+	if err := encoder.Encode(data); err != nil {
+		return nil, err
 	}
 
-	// Close csv file
+	// Close json file
 	if err := f.Close(); err != nil {
-		return nil, fmt.Errorf("failed to close the temp csv file: %w", err)
+		return nil, fmt.Errorf("failed to close the temp json file: %w", err)
 	}
 	return f, nil
+}
+
+func fieldPerUser(json *tp.JsonFileData) {
+	json.Ltv1 = json.Ltv1 / float64(json.Users)
+	json.Ltv2 = json.Ltv2 / float64(json.Users)
+	json.Ltv3 = json.Ltv3 / float64(json.Users)
+	json.Ltv4 = json.Ltv4 / float64(json.Users)
+	json.Ltv5 = json.Ltv5 / float64(json.Users)
+	json.Ltv6 = json.Ltv6 / float64(json.Users)
+	json.Ltv7 = json.Ltv7 / float64(json.Users)
 }
 
 type inputParameters struct {
@@ -49,7 +58,7 @@ type inputParameters struct {
 }
 
 type newDataSourceResult struct {
-	dataSource *csvDataSource
+	dataSource *jsonDataSource
 	err        error
 }
 
@@ -136,9 +145,9 @@ func TestNewDataSource_InvalidInputParams(t *testing.T) {
 	}
 }
 
-func TestCsvDataSource_RunInvalidCsvFileOpening(t *testing.T) {
+func TestCsvDataSource_RunInvalidJsonFileOpening(t *testing.T) {
 	/* ARRANGE */
-	errorStr := cerror.NewCustomError(fmt.Sprintf("failed to open csv file %q", NoExFile)).Error()
+	errorStr := cerror.NewCustomError(fmt.Sprintf("failed to read json file %q", NoExFile)).Error()
 	in := inputParameters{c.Background(), &s.WaitGroup{}, NoExFile, tp.NewRecordChannel(0), tp.NewErrorChannel(0)}
 	in.wg.Add(1)
 	source, _ := NewDataSource(in.ctx, in.wg, in.path, in.rCh, in.eCh)
@@ -169,58 +178,23 @@ func TestCsvDataSource_RunInvalidCsvFileOpening(t *testing.T) {
 	}
 }
 
-func TestNewDataSource_RunReadCorruptedCsvFileHeader(t *testing.T) {
+func TestNewDataSource_RunReadValidJsonFile(t *testing.T) {
 	/* ARRANGE */
-	errorStr := cerror.NewCustomError(fmt.Sprintf("failed to read csv %q", "header")).Error()
-
-	// Prepare quoted string, to fail data source reader
-	csvData := []string{`one,two,th"ree,four`}
-	f, err := createTempCSV(InvalidCsvFile, csvData)
-	if err != nil {
-		t.Fatalf("Failed to create file [%s]", err.Error())
+	// Prepare valid json data
+	jsonData := []tp.JsonFileData{
+		{
+			CampaignId: "9566c74d-1003-4c4d-bbbb-0407d1e2c649", Country: "TR",
+			Ltv1: 1.9542502880389025, Ltv2: 1.994132946978472, Ltv3: 3.0126373791241345, Ltv4: 3.113804897018578,
+			Ltv5: 3.201461265181941, Ltv6: 3.796798675112415, Ltv7: 4.321961161757773, Users: 93,
+		},
+		{
+			CampaignId: "6694d2c4-22ac-4208-a007-2939487f6999", Country: "IT",
+			Ltv1: 0.46401632345650307, Ltv2: 0.7080665558155662, Ltv3: 0.9479043587807372, Ltv4: 1.3855588020049658,
+			Ltv5: 1.812878842576647, Ltv6: 2.423993387880591, Ltv7: 3.3931016433043153, Users: 97,
+		},
 	}
-	defer os.Remove(f.Name())
 
-	in := inputParameters{c.Background(), &s.WaitGroup{}, f.Name(), tp.NewRecordChannel(0), tp.NewErrorChannel(0)}
-	in.wg.Add(1)
-	source, _ := NewDataSource(in.ctx, in.wg, in.path, in.rCh, in.eCh)
-
-	/* ACT */
-	go source.Run()
-
-	/* ASSERT */
-	for {
-		select {
-		// Assert unexpected record data
-		case _, ok := <-in.rCh:
-			if ok {
-				t.Fatalf("Run() with params %v: unexpected record channel value", in)
-			}
-			// Assert expected error data
-		case err, ok := <-in.eCh:
-			if ok {
-				if err.Error() != errorStr {
-					t.Fatalf("Run() : expected error string [%s], got [%s]", errorStr, err.Error())
-				}
-				return
-			}
-			// Assert potential hang situation
-		case <-time.After(1 * time.Second):
-			t.Fatalf("Run() : timeout")
-		}
-	}
-}
-
-func TestNewDataSource_RunReadValidCsvFile(t *testing.T) {
-	/* ARRANGE */
-	// Prepare valid csv data
-	csvData := []string{
-		"UserId,CampaignId,Country,Ltv1,Ltv2,Ltv3,Ltv4,Ltv5,Ltv6,Ltv7\n",
-		"6,9566c74d-1003-4c4d-bbbb-0407d1e2c649,JP,1.73305638789404,1.7684248856061633,2.781764692566589,0,0,0,0\n",
-		"8,6325253f-ec73-4dd7-a9e2-8bf921119c16,US,1.9466884664338124,3.166483202629052,4.892883942338033,0,0,0,0\n",
-		"9,680b4e7c-8b76-4a1b-9d49-d4955c848621,DE,1.281468676817884,1.5047392622480078,1.7456670792496436,0,0,0,0\n",
-	}
-	f, err := createTempCSV(ValidCsvFile, csvData)
+	f, err := createTempJSON(ValidJsonFile, jsonData)
 	if err != nil {
 		t.Fatalf("Failed to create file [%s]", err.Error())
 	}
@@ -228,12 +202,9 @@ func TestNewDataSource_RunReadValidCsvFile(t *testing.T) {
 
 	// Prepare expected data
 	expectedRecords := []*tp.Record{}
-	for _, csv := range csvData[1:] {
-		strs := strings.Split(strings.ReplaceAll(csv, "\n", ""), ",")
-		rec, err := parser.NewRecordFromCsvStrings(strs)
-		if err != nil {
-			t.Fatalf("Failed to parse tmp csv file data [%s]", err.Error())
-		}
+	for _, json := range jsonData {
+		fieldPerUser(&json)
+		rec := parser.NewRecordFromJsonStruct(&json)
 		expectedRecords = append(expectedRecords, rec)
 	}
 
@@ -280,16 +251,22 @@ func TestNewDataSource_RunReadValidCsvFile(t *testing.T) {
 	}
 }
 
-func TestNewDataSource_RunCancelReadingCsvFile(t *testing.T) {
+func TestNewDataSource_RunCancelReadingJsonFile(t *testing.T) {
 	/* ARRANGE */
-	// Prepare valid csv data
-	csvData := []string{
-		"UserId,CampaignId,Country,Ltv1,Ltv2,Ltv3,Ltv4,Ltv5,Ltv6,Ltv7\n",
-		"6,9566c74d-1003-4c4d-bbbb-0407d1e2c649,JP,1.73305638789404,1.7684248856061633,2.781764692566589,0,0,0,0\n",
-		"8,6325253f-ec73-4dd7-a9e2-8bf921119c16,US,1.9466884664338124,3.166483202629052,4.892883942338033,0,0,0,0\n",
-		"9,680b4e7c-8b76-4a1b-9d49-d4955c848621,DE,1.281468676817884,1.5047392622480078,1.7456670792496436,0,0,0,0\n",
+	// Prepare valid json data
+	jsonData := []tp.JsonFileData{
+		{
+			CampaignId: "9566c74d-1003-4c4d-bbbb-0407d1e2c649", Country: "TR",
+			Ltv1: 1.9542502880389025, Ltv2: 1.994132946978472, Ltv3: 3.0126373791241345, Ltv4: 3.113804897018578,
+			Ltv5: 3.201461265181941, Ltv6: 3.796798675112415, Ltv7: 4.321961161757773, Users: 93,
+		},
+		{
+			CampaignId: "6694d2c4-22ac-4208-a007-2939487f6999", Country: "IT",
+			Ltv1: 0.46401632345650307, Ltv2: 0.7080665558155662, Ltv3: 0.9479043587807372, Ltv4: 1.3855588020049658,
+			Ltv5: 1.812878842576647, Ltv6: 2.423993387880591, Ltv7: 3.3931016433043153, Users: 97,
+		},
 	}
-	f, err := createTempCSV(ValidCsvFile, csvData)
+	f, err := createTempJSON(ValidJsonFile, jsonData)
 	if err != nil {
 		t.Fatalf("Failed to create file [%s]", err.Error())
 	}
@@ -345,103 +322,36 @@ func TestNewDataSource_RunCancelReadingCsvFile(t *testing.T) {
 	}
 }
 
-func TestNewDataSource_RunReadCorruptedLtvDataFromCsvFileData(t *testing.T) {
+func TestNewDataSource_RunReadCorruptedJsonFileContent(t *testing.T) {
 	/* ARRANGE */
-	errorStr := cerror.NewCustomError("failed to convert ltv data").Error()
-	// Prepare invalid csv data
-	csvData := []string{
-		"UserId,CampaignId,Country,Ltv1,Ltv2,Ltv3,Ltv4,Ltv5,Ltv6,Ltv7\n",
-		"6,9566c74d-1003-4c4d-bbbb-0407d1e2c649,JP,1.73305638789404,1.7684248856061633,2.781764692566589,0,0,0,0\n",
-		"8,6325253f-ec73-4dd7-a9e2-8bf921119c16,US,1.9466884664338124,3.166483202629052,4.892883942338033,0,0,0,0\n",
-		"9,680b4e7c-8b76-4a1b-9d49-d4955c848621,DE,1.281468676817884,HELLO,1.7456670792496436,0,0,0,0\n",
+	// Prepare valid json data
+	jsonData := []map[string]interface{}{
+		{
+			"CampaignId": "9566c74d-1003-4c4d-bbbb-0407d1e2c649", "Country": "TR",
+			"Ltv1": "1.9542502880389025", "Ltv2": "1.994132946978472", "Ltv3": "3.0126373791241345", "Ltv4": "3.113804897018578",
+			"Ltv5": "3.201461265181941", "Ltv6": "3.796798675112415", "Ltv7": "4.321961161757773", "Users": "93",
+		},
+		{
+			"CampaignId": "9566c74d-1003-4c4d-bbbb-0407d1e2c649", "Country": "TR",
+			"Ltv1": "1.9542502880389025", "Ltv2": "1.994HELLO978472", "Ltv3": "3.0126373791241345", "Ltv4": "3.113804897018578",
+			"Ltv5": "3.201461265181941", "Ltv6": "3.796798675112415", "Ltv7": "4.321961161757773", "Users": "93",
+		},
 	}
-	f, err := createTempCSV(InvalidCsvFile, csvData)
+	f, err := createTempJSON(InvalidJsonFile, jsonData)
 	if err != nil {
 		t.Fatalf("Failed to create file [%s]", err.Error())
 	}
 	defer os.Remove(f.Name())
+	errorStr := cerror.NewCustomError(fmt.Sprintf("failed to unmarchall json data %q", f.Name())).Error()
 
-	// Prepare expected data, skip last record (corrupted data)
-	expectedRecords := []*tp.Record{}
-	for _, csv := range csvData[1 : len(csvData)-1] {
-		strs := strings.Split(strings.ReplaceAll(csv, "\n", ""), ",")
-		rec, err := parser.NewRecordFromCsvStrings(strs)
-		if err != nil {
-			t.Fatalf("Failed to parse tmp csv file data [%s]", err.Error())
-		}
-		expectedRecords = append(expectedRecords, rec)
+	// Prepare expected data
+	json := tp.JsonFileData{
+		CampaignId: "9566c74d-1003-4c4d-bbbb-0407d1e2c649", Country: "TR",
+		Ltv1: 1.9542502880389025, Ltv2: 1.994132946978472, Ltv3: 3.0126373791241345, Ltv4: 3.113804897018578,
+		Ltv5: 3.201461265181941, Ltv6: 3.796798675112415, Ltv7: 4.321961161757773, Users: 93,
 	}
-
-	in := inputParameters{c.Background(), &s.WaitGroup{}, f.Name(), tp.NewRecordChannel(0), tp.NewErrorChannel(0)}
-	in.wg.Add(1)
-	source, _ := NewDataSource(in.ctx, in.wg, in.path, in.rCh, in.eCh)
-
-	/* ACT */
-	go source.Run()
-
-	/* ASSERT */
-	for {
-		select {
-		// Assert expected record data
-		case result, ok := <-in.rCh:
-			if ok {
-				// Assert result
-				expected := expectedRecords[0]
-				if !reflect.DeepEqual(expected, result) {
-					t.Fatalf("Run() exp: %+v\ngot: %+v", expected, result)
-				}
-				// Remove 1 element, slice as a queue )
-				expectedRecords = expectedRecords[1:]
-
-			} else {
-				// Assert empty expected records list
-				if len(expectedRecords) != 0 {
-					t.Fatalf("Run() unexpected records slice len exp: %+v\ngot: %+v", 0, len(expectedRecords))
-				}
-				return
-			}
-			// Assert expected error data
-		case err, ok := <-in.eCh:
-			if ok {
-				if err.Error() != errorStr {
-					t.Fatalf("Run() : expected error string [%s], got [%s]", errorStr, err.Error())
-				}
-				return
-			} else {
-				in.eCh = nil
-			}
-			// Assert potential hang situation
-		case <-time.After(1 * time.Second):
-			t.Fatalf("Run() : timeout")
-		}
-	}
-}
-
-func TestNewDataSource_RunReadCorruptedCsvFileContent(t *testing.T) {
-	/* ARRANGE */
-	errorStr := cerror.NewCustomError(fmt.Sprintf("failed to read csv %q", "line")).Error()
-	// Prepare invalid csv data
-	csvData := []string{
-		"UserId,CampaignId,Country,Ltv1,Ltv2,Ltv3,Ltv4,Ltv5,Ltv6,Ltv7\n",
-		"6,9566c74d-1003-4c4d-bbbb-0407d1e2c649,JP,1.73305638789404,1.7684248856061633,2.781764692566589,0,0,0,0\n",
-		`one,two,th"ree,four,f'M'"F"\n`,
-	}
-	f, err := createTempCSV(InvalidCsvFile, csvData)
-	if err != nil {
-		t.Fatalf("Failed to create file [%s]", err.Error())
-	}
-	defer os.Remove(f.Name())
-
-	// Prepare expected data, skip last record (corrupted data)
-	expectedRecords := []*tp.Record{}
-	for _, csv := range csvData[1 : len(csvData)-1] {
-		strs := strings.Split(strings.ReplaceAll(csv, "\n", ""), ",")
-		rec, err := parser.NewRecordFromCsvStrings(strs)
-		if err != nil {
-			t.Fatalf("Failed to parse tmp csv file data [%s]", err.Error())
-		}
-		expectedRecords = append(expectedRecords, rec)
-	}
+	fieldPerUser(&json)
+	expectedRecords := []*tp.Record{parser.NewRecordFromJsonStruct(&json)}
 
 	in := inputParameters{c.Background(), &s.WaitGroup{}, f.Name(), tp.NewRecordChannel(0), tp.NewErrorChannel(0)}
 	in.wg.Add(1)

@@ -13,13 +13,28 @@ const (
 	CampaignIdStr = "81855ad8-681d-4d86-91e9-1e00167939cb"
 	CountryStr    = "BY"
 
-	Ltv1Str = "1.5499697874482206"
-	Ltv2Str = "2.252663605698363"
-	Ltv3Str = "2.2986363323452683"
-	Ltv4Str = "2.8840086432719603"
-	Ltv5Str = "3.696001808588305"
-	Ltv6Str = "5.714436511023778"
-	Ltv7Str = "9.7414418135349954"
+	Ltv1Str   = "1.5499697874482206"
+	Ltv1Float = 1.5499697874482206
+
+	Ltv2Str   = "2.252663605698363"
+	Ltv2Float = 2.252663605698363
+
+	Ltv3Str   = "2.2986363323452683"
+	Ltv3Float = 2.2986363323452683
+
+	Ltv4Str   = "2.8840086432719603"
+	Ltv4Float = 2.8840086432719603
+
+	Ltv5Str   = "3.696001808588305"
+	Ltv5Float = 3.696001808588305
+
+	Ltv6Str   = "5.714436511023778"
+	Ltv6Float = 5.714436511023778
+
+	Ltv7Str   = "9.7414418135349954"
+	Ltv7Float = 9.7414418135349954
+
+	Users = 93
 )
 
 func TestNewRecordFromCsvStrings_InvalidInputData(t *testing.T) {
@@ -142,5 +157,25 @@ func TestNewRecordFromCsvStrings_ValidInputData(t *testing.T) {
 	// Assert result
 	if !reflect.DeepEqual(result, expectedResult) {
 		t.Errorf("NewRecordFromCsvStrings() exp: %+v\ngot: %+v", expectedResult, result)
+	}
+}
+
+func TestNewRecordFromJsonStruct(t *testing.T) {
+	/* ARRANGE */
+	json := types.JsonFileData{
+		CampaignId: CampaignIdStr, Country: CountryStr,
+		Ltv1: Ltv1Float, Ltv2: Ltv2Float, Ltv3: Ltv3Float, Ltv4: Ltv4Float,
+		Ltv5: Ltv5Float, Ltv6: Ltv6Float, Ltv7: Ltv7Float, Users: Users,
+	}
+	expected := types.NewRecord(CampaignIdStr, CountryStr, types.LtvCollection{
+		Ltv1Float, Ltv2Float, Ltv3Float, Ltv4Float, Ltv5Float, Ltv6Float, Ltv7Float})
+
+	/* ACT */
+	result := NewRecordFromJsonStruct(&json)
+
+	/* ASSERT */
+	// Assert result
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("NewRecordFromCsvStrings() exp: %+v\ngot: %+v", expected, result)
 	}
 }

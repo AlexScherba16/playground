@@ -13,7 +13,7 @@ import (
 	"sync"
 )
 
-// csvDataSource represents a data source backed by a CSV file.
+// csvDataSource represents a data source backed by a CSV file
 type csvDataSource struct {
 	ctx         context.Context
 	wg          *sync.WaitGroup
