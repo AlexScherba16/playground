@@ -7,6 +7,7 @@ import (
 	cnst "playground/internal/constants"
 	"playground/internal/runners/aggregator"
 	"playground/internal/runners/datasource"
+	"playground/internal/runners/predictor"
 	"playground/internal/types"
 	"sync"
 )
@@ -23,6 +24,7 @@ func main() {
 		cnst.RecordChannelBuffer,
 		cnst.ErrorChannelBuffer,
 		cnst.AggregateChannelBuffer,
+		cnst.PredictChannelBuffer,
 	)
 
 	// Prepare input params
@@ -41,8 +43,15 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
+	// Create predictor runner
+	predictorRunner, err := predictor.NewPredictor(wg, flags.Model(), ch.AggregateCh, ch.PredictCh)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
 	// Suppress unused variables, only for now, I promise )
 	_ = cancel
 	_ = sourceRunner
 	_ = aggregatorRunner
+	_ = predictorRunner
 }

@@ -65,7 +65,7 @@ func (r *countryAggregator) Run() {
 		}
 
 		// Send aggregated data to next runner
-		aggregatedData := t.NewAggregatedData(t.KeyType(record.Country()), record.Ltv())
+		aggregatedData := t.NewAggregatedData(record.Country(), record.Ltv())
 		r.aggregatedCh <- aggregatedData
 	}
 	log.Debug("campaign aggregator finished work")

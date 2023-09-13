@@ -65,7 +65,7 @@ func (r *campaignAggregator) Run() {
 		}
 
 		// Send aggregated data to next runner
-		aggregatedData := t.NewAggregatedData(t.KeyType(record.CampaignId()), record.Ltv())
+		aggregatedData := t.NewAggregatedData(record.CampaignId(), record.Ltv())
 		r.aggregateCh <- aggregatedData
 	}
 	log.Debug("campaign aggregator finished work")

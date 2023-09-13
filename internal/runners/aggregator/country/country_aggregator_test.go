@@ -129,7 +129,7 @@ func TestNewAggregator_RunReadRecordsChannel(t *testing.T) {
 
 	expectedAggregatedData := []*tp.AggregatedData{}
 	for _, record := range records {
-		agg := tp.NewAggregatedData(tp.KeyType(record.Country()), record.Ltv())
+		agg := tp.NewAggregatedData(record.Country(), record.Ltv())
 		expectedAggregatedData = append(expectedAggregatedData, agg)
 	}
 
@@ -191,7 +191,7 @@ func TestNewAggregator_RunReadCancelEventFromRecordsChannel(t *testing.T) {
 
 	expectedAggregatedData := []*tp.AggregatedData{}
 	for _, record := range records[0 : len(records)-1] {
-		agg := tp.NewAggregatedData(tp.KeyType(record.Country()), record.Ltv())
+		agg := tp.NewAggregatedData(record.Country(), record.Ltv())
 		expectedAggregatedData = append(expectedAggregatedData, agg)
 	}
 

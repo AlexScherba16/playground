@@ -40,16 +40,14 @@ func (r *Record) CampaignId() string { return r.campaignId }
 func (r *Record) Country() string    { return r.country }
 func (r *Record) Ltv() LtvCollection { return r.ltv }
 
-type KeyType string
-
 // AggregatedData struct represents aggregated data, according to key
 type AggregatedData struct {
-	key KeyType
+	key string
 	ltv LtvCollection
 }
 
 // NewAggregatedData initializes and returns a new AggregatedData struct
-func NewAggregatedData(key KeyType, ltv LtvCollection) *AggregatedData {
+func NewAggregatedData(key string, ltv LtvCollection) *AggregatedData {
 	return &AggregatedData{
 		key: key,
 		ltv: ltv,
@@ -57,17 +55,17 @@ func NewAggregatedData(key KeyType, ltv LtvCollection) *AggregatedData {
 }
 
 // AggregatedData struct getters
-func (r *AggregatedData) Key() KeyType       { return r.key }
+func (r *AggregatedData) Key() string        { return r.key }
 func (r *AggregatedData) Ltv() LtvCollection { return r.ltv }
 
 // PredictedData struct represents predicted data, according to key
 type PredictedData struct {
-	key       KeyType
+	key       string
 	predicted float64
 }
 
 // NewPredictedData initializes and returns a new PredictedData struct
-func NewPredictedData(key KeyType, predicted float64) *PredictedData {
+func NewPredictedData(key string, predicted float64) *PredictedData {
 	return &PredictedData{
 		key:       key,
 		predicted: predicted,
@@ -75,5 +73,5 @@ func NewPredictedData(key KeyType, predicted float64) *PredictedData {
 }
 
 // PredictedData struct getters
-func (r *PredictedData) Key() KeyType       { return r.key }
+func (r *PredictedData) Key() string        { return r.key }
 func (r *PredictedData) Predicted() float64 { return r.predicted }
