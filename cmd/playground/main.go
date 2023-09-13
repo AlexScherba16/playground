@@ -5,6 +5,7 @@ import (
 	"log"
 	"playground/internal/cli"
 	cnst "playground/internal/constants"
+	"playground/internal/runners/aggregator"
 	"playground/internal/runners/datasource"
 	"playground/internal/types"
 	"sync"
@@ -21,6 +22,7 @@ func main() {
 	ch := types.NewChannels(
 		cnst.RecordChannelBuffer,
 		cnst.ErrorChannelBuffer,
+		cnst.AggregateChannelBuffer,
 	)
 
 	// Prepare input params
@@ -33,7 +35,14 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
+	// Create aggregator runner
+	aggregatorRunner, err := aggregator.NewAggregator(wg, flags.Aggregate(), ch.RecordCh, ch.AggregateCh)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+
 	// Suppress unused variables, only for now, I promise )
 	_ = cancel
 	_ = sourceRunner
+	_ = aggregatorRunner
 }

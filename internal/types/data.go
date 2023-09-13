@@ -39,3 +39,23 @@ func NewRecord(campaignId, country string, ltv LtvCollection) *Record {
 func (r *Record) CampaignId() string { return r.campaignId }
 func (r *Record) Country() string    { return r.country }
 func (r *Record) Ltv() LtvCollection { return r.ltv }
+
+type KeyType string
+
+// AggregatedData struct represents aggregated data, according to key
+type AggregatedData struct {
+	key KeyType
+	ltv LtvCollection
+}
+
+// NewAggregatedData initializes and returns a new AggregatedData struct
+func NewAggregatedData(key KeyType, ltv LtvCollection) *AggregatedData {
+	return &AggregatedData{
+		key: key,
+		ltv: ltv,
+	}
+}
+
+// AggregatedData struct getters
+func (r *AggregatedData) Key() KeyType       { return r.key }
+func (r *AggregatedData) Ltv() LtvCollection { return r.ltv }

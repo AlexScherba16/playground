@@ -16,7 +16,7 @@ import (
 
 const (
 	NoExFile       = "no_no_no_ExistFile"
-	InvalidCsvFile = "tmp.inv.*.abc.*.csv"
+	InvalidCsvFile = "tmp.inv.abc.*.csv"
 	ValidCsvFile   = "tmp.*.csv"
 )
 
@@ -130,7 +130,7 @@ func TestNewDataSource_InvalidInputParams(t *testing.T) {
 
 			// Assert result
 			if !reflect.DeepEqual(result, testCase.expectedResult.dataSource) {
-				t.Fatalf("NewRecordFromCsvStrings() exp: %+v\ngot: %+v", testCase.expectedResult.dataSource, result)
+				t.Fatalf("NewDataSource() exp: %+v\ngot: %+v", testCase.expectedResult.dataSource, result)
 			}
 		})
 	}
