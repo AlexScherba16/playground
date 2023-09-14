@@ -6,7 +6,7 @@ import (
 	"log"
 	"playground/internal/cli"
 	cnst "playground/internal/constants"
-	"playground/internal/runners/aggregator"
+	"playground/internal/runners/aggregator/aggregator_factory"
 	"playground/internal/runners/common"
 	"playground/internal/runners/datasource"
 	postprocessor "playground/internal/runners/postprocessor/postprocessor_factory"
@@ -42,7 +42,7 @@ func main() {
 	}
 
 	// Create aggregator runner
-	aggregatorRunner, err := aggregator.NewAggregator(wg, flags.Aggregate(), ch.RecordCh, ch.AggregateCh)
+	aggregatorRunner, err := aggregator_factory.NewRunner(wg, flags.Aggregate(), ch.RecordCh, ch.AggregateCh)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}

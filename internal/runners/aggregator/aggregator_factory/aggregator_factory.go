@@ -1,10 +1,11 @@
-package aggregator
+package aggregator_factory
 
 import (
 	"fmt"
 	cnst "playground/internal/constants"
-	"playground/internal/runners/aggregator/campaign"
-	"playground/internal/runners/aggregator/country"
+	"playground/internal/runners/aggregator/runner"
+	campaign "playground/internal/runners/aggregator/strategy/campaign_aggregator_strategy"
+	country "playground/internal/runners/aggregator/strategy/country_aggregator_strategy"
 	"playground/internal/runners/common"
 	t "playground/internal/types"
 	"playground/internal/utils/cerror"
@@ -22,9 +23,9 @@ func NewRunner(
 	// General Factory logic, create data aggregator according to aggregate parameter
 	switch aggregate {
 	case cnst.AggregateCampaign:
-		return campaign.NewAggregator(wg, aggregate, recordCh, aggregateCh)
+		return runner.NewAggregatorRunner(wg, recordCh, aggregateCh, campaign.NewCampaignAggregatorStrategy())
 	case cnst.AggregateCountry:
-		return country.NewAggregator(wg, aggregate, recordCh, aggregateCh)
+		return runner.NewAggregatorRunner(wg, recordCh, aggregateCh, country.NewCountryAggregatorStrategy())
 	default:
 		return nil, cerror.NewCustomError(fmt.Sprintf("%q invalid aggregate parameter", aggregate))
 	}
