@@ -30,6 +30,10 @@ func TestNewRunner(t *testing.T) {
 			name:  "LinearExtrapolationParameter",
 			model: cnst.LinearExtrapolationPredictorModel,
 		},
+		{
+			name:  "AverageParameter",
+			model: cnst.AveragePredictorModel,
+		},
 	}
 
 	for _, testCase := range tests {

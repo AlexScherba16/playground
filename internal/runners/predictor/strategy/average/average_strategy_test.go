@@ -1,4 +1,4 @@
-package linext
+package average
 
 import (
 	tp "playground/internal/types"
@@ -15,12 +15,12 @@ type inputParameters struct {
 	pCh tp.PredictorChannel
 }
 
-func TestLinearExtrapolationWorkerStrategy(t *testing.T) {
+func TestAverageWorkerStrategy(t *testing.T) {
 	/* ARRANGE */
 	result := NewPredictWorkerStrategy()
 
 	/* ACT */
-	expected := reflect.ValueOf(linearExtrapolationWorker).Pointer()
+	expected := reflect.ValueOf(averageWorker).Pointer()
 
 	/* ASSERT */
 	if reflect.ValueOf(result).Pointer() != expected {
@@ -28,7 +28,7 @@ func TestLinearExtrapolationWorkerStrategy(t *testing.T) {
 	}
 }
 
-func TestLinearExtrapolationWorker_RunWorker(t *testing.T) {
+func TestAverageWorker_RunWorker(t *testing.T) {
 	/* ARRANGE */
 	aggrKey := "US"
 	in := inputParameters{
@@ -43,7 +43,7 @@ func TestLinearExtrapolationWorker_RunWorker(t *testing.T) {
 		tp.NewAggregatedData(aggrKey, tp.LtvCollection{1, 8, 0, 0, 0, 0, 0}),
 		tp.NewAggregatedData(aggrKey, tp.LtvCollection{1, 4, 9, 12, 15, 0, 0}),
 	}
-	expected := tp.NewPredictedData(aggrKey, 180)
+	expected := tp.NewPredictedData(aggrKey, 149.4)
 	in.wg.Add(1)
 
 	/* ACT */
@@ -54,7 +54,7 @@ func TestLinearExtrapolationWorker_RunWorker(t *testing.T) {
 			in.aCh <- aggData
 		}
 	}()
-	go linearExtrapolationWorker(in.wg, aggrKey, in.aCh, in.pCh)
+	go averageWorker(in.wg, aggrKey, in.aCh, in.pCh)
 
 	/* ASSERT */
 	for {
@@ -64,14 +64,14 @@ func TestLinearExtrapolationWorker_RunWorker(t *testing.T) {
 			if ok {
 				// Assert result
 				if result.Key() != expected.Key() {
-					t.Fatalf("linearExtrapolationWorker() : expected key [%v], got [%v]", expected.Key(), result.Key())
+					t.Fatalf("averageWorker() : expected key [%v], got [%v]", expected.Key(), result.Key())
 				}
 				if expected.Predicted() != result.Predicted() {
-					t.Fatalf("linearExtrapolationWorker() : for %+v\nexpectd : %+v\ngot: %+v", result, expected.Predicted(), result.Predicted())
+					t.Fatalf("averageWorker() : for %+v\nexpectd : %+v\ngot: %+v", result, expected.Predicted(), result.Predicted())
 				}
 				return
 			} else {
-				t.Fatalf("linearExtrapolationWorker() : shouldn't be here")
+				t.Fatalf("averageWorker() : shouldn't be here")
 			}
 			// Assert potential hang situation
 		case <-time.After(1 * time.Second):
@@ -80,7 +80,7 @@ func TestLinearExtrapolationWorker_RunWorker(t *testing.T) {
 	}
 }
 
-func TestLinearExtrapolationWorker_RunWorkerWithCancelEvent(t *testing.T) {
+func TestAverageWorker_RunWorkerWithCancelEvent(t *testing.T) {
 	/* ARRANGE */
 	aggrKey := "US"
 	in := inputParameters{
@@ -102,7 +102,7 @@ func TestLinearExtrapolationWorker_RunWorkerWithCancelEvent(t *testing.T) {
 			in.aCh <- aggData
 		}
 	}()
-	go linearExtrapolationWorker(in.wg, aggrKey, in.aCh, in.pCh)
+	go averageWorker(in.wg, aggrKey, in.aCh, in.pCh)
 
 	/* ASSERT */
 	for {
@@ -115,7 +115,7 @@ func TestLinearExtrapolationWorker_RunWorkerWithCancelEvent(t *testing.T) {
 
 			result := runtime.NumGoroutine()
 			if result != expected {
-				t.Fatalf("linearExtrapolationWorker() goroutines value: expected : %+v\ngot: %+v",
+				t.Fatalf("averageWorker() goroutines value: expected : %+v\ngot: %+v",
 					expected, result)
 			}
 			return

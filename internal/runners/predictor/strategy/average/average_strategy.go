@@ -1,4 +1,4 @@
-package linext
+package average
 
 import (
 	log "github.com/sirupsen/logrus"
@@ -8,9 +8,9 @@ import (
 	"sync"
 )
 
-// linearExtrapolationWorker perform linear extrapolation prediction logic for key related aggregated data
+// averageWorker perform prediction logic using average value as a delta for key related aggregated data
 // IMPORTANT: it doesn't close channels and predict only for PredictForNDay
-func linearExtrapolationWorker(wg *sync.WaitGroup, key string, inCh t.AggregatorChannel, outCh t.PredictorChannel) {
+func averageWorker(wg *sync.WaitGroup, key string, inCh t.AggregatorChannel, outCh t.PredictorChannel) {
 	defer wg.Done()
 
 	ltvSums := t.LtvCollection{}
@@ -20,7 +20,7 @@ func linearExtrapolationWorker(wg *sync.WaitGroup, key string, inCh t.Aggregator
 	for aggData := range inCh {
 		// Received cancel event
 		if aggData == nil {
-			log.Warning("linext worker shutdown")
+			log.Warning("average worker shutdown")
 			return
 		}
 
@@ -43,13 +43,13 @@ func linearExtrapolationWorker(wg *sync.WaitGroup, key string, inCh t.Aggregator
 		}
 	}
 	// Predict n-th day ltv
-	result := t.NewPredictedData(key, predictor.LinearExtrapolation(averages, cnst.PredictForNDay))
+	result := t.NewPredictedData(key, predictor.Average(averages, cnst.PredictForNDay))
 
 	// Send n-th day predicted data
 	outCh <- result
 }
 
-// NewPredictWorkerStrategy returns linexp worker strategy
+// NewPredictWorkerStrategy returns average worker strategy
 func NewPredictWorkerStrategy() t.PredictWorkerStrategy {
-	return linearExtrapolationWorker
+	return averageWorker
 }

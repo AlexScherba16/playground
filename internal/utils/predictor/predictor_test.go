@@ -33,3 +33,25 @@ func TestLinearExtrapolation(t *testing.T) {
 		}
 	}
 }
+
+func TestAverage(t *testing.T) {
+	tests := []struct {
+		data     []float64
+		day      float64
+		expected float64
+	}{
+		{
+			data:     []float64{10, 10.6, 11.11, 15.91},
+			day:      60,
+			expected: 100,
+		},
+		// Add here new cases, main idea was make sure that Average is really average )
+	}
+
+	for _, testCase := range tests {
+		result := Average(testCase.data, testCase.day)
+		if math.Abs(result-testCase.expected) > 0.2 {
+			t.Errorf("Average() : input %v expected %v got %v", testCase.data, testCase.expected, result)
+		}
+	}
+}

@@ -5,6 +5,7 @@ import (
 	cnst "playground/internal/constants"
 	"playground/internal/runners/common"
 	pr "playground/internal/runners/predictor/runner"
+	"playground/internal/runners/predictor/strategy/average"
 	"playground/internal/runners/predictor/strategy/linext"
 	t "playground/internal/types"
 	"playground/internal/utils/cerror"
@@ -23,6 +24,8 @@ func NewRunner(
 	switch model {
 	case cnst.LinearExtrapolationPredictorModel:
 		return pr.NewPredictorRunner(wg, aggregateCh, predictCh, linext.NewPredictWorkerStrategy())
+	case cnst.AveragePredictorModel:
+		return pr.NewPredictorRunner(wg, aggregateCh, predictCh, average.NewPredictWorkerStrategy())
 	default:
 		return nil, cerror.NewCustomError(fmt.Sprintf("%q invalid model parameter", model))
 	}

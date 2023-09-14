@@ -19,3 +19,10 @@ func LinearExtrapolation(data []float64, day float64) float64 {
 
 	return m*day + b
 }
+
+// IMPORTANT: Expected len(data) != 0
+func Average(data []float64, day float64) float64 {
+	dataLen := len(data)
+	delta := (data[dataLen-1] - data[0]) / float64(dataLen)
+	return data[dataLen-1] + delta*float64(day-float64(dataLen-1))
+}
