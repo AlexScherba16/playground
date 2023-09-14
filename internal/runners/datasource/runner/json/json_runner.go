@@ -12,8 +12,8 @@ import (
 	"sync"
 )
 
-// jsonDataSource represents a data source backed by a JSON file
-type jsonDataSource struct {
+// jsonDataSourceRunner represents a data source runner backed by a JSON file
+type jsonDataSourceRunner struct {
 	ctx          context.Context
 	wg           *sync.WaitGroup
 	jsonFilePath string
@@ -21,14 +21,14 @@ type jsonDataSource struct {
 	errorCh      t.ErrorChannel
 }
 
-// NewDataSource initializes and returns jsonDataSource
-// Returns error if some of ctx, wg, recordCh is nil, or open file failure
-func NewDataSource(
+// NewDataSourceRunner initializes and returns jsonDataSourceRunner
+// Returns error if some of ctx, wg, recordCh, errorCh is nil
+func NewDataSourceRunner(
 	ctx context.Context,
 	wg *sync.WaitGroup,
 	filePath string,
 	recordCh t.RecordChannel,
-	errorCh t.ErrorChannel) (*jsonDataSource, error) {
+	errorCh t.ErrorChannel) (*jsonDataSourceRunner, error) {
 
 	// Validate parameters
 	if ctx == nil {
@@ -44,7 +44,7 @@ func NewDataSource(
 		return nil, cerror.NewCustomError("invalid error channel")
 	}
 
-	return &jsonDataSource{
+	return &jsonDataSourceRunner{
 		ctx:          ctx,
 		wg:           wg,
 		jsonFilePath: filePath,
@@ -53,7 +53,8 @@ func NewDataSource(
 	}, nil
 }
 
-func (r *jsonDataSource) Run() {
+// Run interface implementation, related to JSON file specific
+func (r *jsonDataSourceRunner) Run() {
 	go func() {
 		defer r.wg.Done()
 		defer close(r.recordCh)

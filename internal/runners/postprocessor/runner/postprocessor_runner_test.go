@@ -2,8 +2,8 @@ package runner
 
 import (
 	"fmt"
-	"playground/internal/runners/postprocessor/strategy/campaign_postprocessor_strategy"
-	"playground/internal/runners/postprocessor/strategy/country_postprocessor_strategy"
+	"playground/internal/runners/postprocessor/strategy/campaign"
+	"playground/internal/runners/postprocessor/strategy/country"
 	tp "playground/internal/types"
 	"playground/internal/utils/cerror"
 	"reflect"
@@ -93,7 +93,7 @@ func TestNewPostProcessorRunner_ValidInputParamsCountryStrategy(t *testing.T) {
 		&s.WaitGroup{},
 		tp.NewPredictorChannel(0),
 		tp.NewPostProcessorChannel(0),
-		country_postprocessor_strategy.NewPostProcessorStrategy(),
+		country.NewPostProcessorStrategy(),
 	}
 
 	/* ACT */
@@ -115,7 +115,7 @@ func TestNewPostProcessorRunner_RunWithCountryStrategy(t *testing.T) {
 		&s.WaitGroup{},
 		tp.NewPredictorChannel(0),
 		tp.NewPostProcessorChannel(0),
-		country_postprocessor_strategy.NewPostProcessorStrategy(),
+		country.NewPostProcessorStrategy(),
 	}
 	//Prepare predicted data
 	predicted := []*tp.PredictedData{
@@ -176,7 +176,7 @@ func TestNewPostProcessorRunner_RunWithCountryStrategyAndCancelEvent(t *testing.
 		&s.WaitGroup{},
 		tp.NewPredictorChannel(0),
 		tp.NewPostProcessorChannel(0),
-		country_postprocessor_strategy.NewPostProcessorStrategy(),
+		country.NewPostProcessorStrategy(),
 	}
 	//Prepare cancel event
 	predicted := []*tp.PredictedData{nil}
@@ -227,7 +227,7 @@ func TestNewPostProcessorRunner_RunWithCampaignStrategy(t *testing.T) {
 		&s.WaitGroup{},
 		tp.NewPredictorChannel(0),
 		tp.NewPostProcessorChannel(0),
-		campaign_postprocessor_strategy.NewPostProcessorStrategy(),
+		campaign.NewPostProcessorStrategy(),
 	}
 	//Prepare predicted data
 	predicted := []*tp.PredictedData{
@@ -288,7 +288,7 @@ func TestNewPostProcessorRunner_RunWithCampaignStrategyAndCancelEvent(t *testing
 		&s.WaitGroup{},
 		tp.NewPredictorChannel(0),
 		tp.NewPostProcessorChannel(0),
-		campaign_postprocessor_strategy.NewPostProcessorStrategy(),
+		campaign.NewPostProcessorStrategy(),
 	}
 	// Prepare cancel event
 	predicted := []*tp.PredictedData{nil}

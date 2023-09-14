@@ -1,4 +1,4 @@
-package datasource
+package datasource_factory
 
 import (
 	"context"
@@ -7,16 +7,16 @@ import (
 	"path/filepath"
 	cnst "playground/internal/constants"
 	"playground/internal/runners/common"
-	"playground/internal/runners/datasource/csv"
-	"playground/internal/runners/datasource/json"
+	"playground/internal/runners/datasource/runner/csv"
+	"playground/internal/runners/datasource/runner/json"
 	t "playground/internal/types"
 	"playground/internal/utils/cerror"
 	"sync"
 )
 
-// NewDataSource creates a new data source runner to stream data
+// NewRunner creates a new data source runner to stream data
 // In data processing pipeline
-func NewDataSource(
+func NewRunner(
 	ctx context.Context,
 	wg *sync.WaitGroup,
 	filePath string,
@@ -35,9 +35,9 @@ func NewDataSource(
 	// General Factory logic, create data source depends on file extension
 	switch ext {
 	case cnst.CsvDataSource:
-		return csv.NewDataSource(ctx, wg, filePath, recordCh, errorCh)
+		return csv.NewDataSourceRunner(ctx, wg, filePath, recordCh, errorCh)
 	case cnst.JsonDataSource:
-		return json.NewDataSource(ctx, wg, filePath, recordCh, errorCh)
+		return json.NewDataSourceRunner(ctx, wg, filePath, recordCh, errorCh)
 	default:
 		return nil, cerror.NewCustomError(fmt.Sprintf("%q invalid data source type extension", ext))
 	}

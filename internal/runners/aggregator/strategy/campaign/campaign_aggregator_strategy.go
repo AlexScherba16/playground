@@ -1,4 +1,4 @@
-package campaign_aggregator_strategy
+package campaign
 
 import (
 	t "playground/internal/types"

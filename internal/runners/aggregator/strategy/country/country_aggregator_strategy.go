@@ -1,4 +1,4 @@
-package country_aggregator_strategy
+package country
 
 import (
 	t "playground/internal/types"

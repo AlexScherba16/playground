@@ -1,8 +1,8 @@
 package runner
 
 import (
-	"playground/internal/runners/aggregator/strategy/campaign_aggregator_strategy"
-	"playground/internal/runners/aggregator/strategy/country_aggregator_strategy"
+	"playground/internal/runners/aggregator/strategy/campaign"
+	"playground/internal/runners/aggregator/strategy/country"
 	tp "playground/internal/types"
 	"playground/internal/utils/cerror"
 	"reflect"
@@ -95,7 +95,7 @@ func TestNewAggregatorRunner_ValidInputParamsCountryStrategy(t *testing.T) {
 		&s.WaitGroup{},
 		tp.NewRecordChannel(0),
 		tp.NewAggregatorChannel(0),
-		country_aggregator_strategy.NewCountryAggregatorStrategy(),
+		country.NewCountryAggregatorStrategy(),
 	}
 
 	/* ACT */
@@ -117,7 +117,7 @@ func TestNewAggregatorRunner_RunWithCountryStrategy(t *testing.T) {
 		&s.WaitGroup{},
 		tp.NewRecordChannel(0),
 		tp.NewAggregatorChannel(0),
-		country_aggregator_strategy.NewCountryAggregatorStrategy(),
+		country.NewCountryAggregatorStrategy(),
 	}
 	// Prepare records and expected aggregated data
 	records := []*tp.Record{
@@ -179,7 +179,7 @@ func TestNewAggregatorRunner_RunWithCountryStrategyAndCancelEvent(t *testing.T) 
 		&s.WaitGroup{},
 		tp.NewRecordChannel(0),
 		tp.NewAggregatorChannel(0),
-		country_aggregator_strategy.NewCountryAggregatorStrategy(),
+		country.NewCountryAggregatorStrategy(),
 	}
 	// Prepare records and expected aggregated data
 	records := []*tp.Record{
@@ -249,7 +249,7 @@ func TestNewAggregatorRunner_RunWithCampaignStrategy(t *testing.T) {
 		&s.WaitGroup{},
 		tp.NewRecordChannel(0),
 		tp.NewAggregatorChannel(0),
-		campaign_aggregator_strategy.NewCampaignAggregatorStrategy(),
+		campaign.NewCampaignAggregatorStrategy(),
 	}
 	// Prepare records and expected aggregated data
 	records := []*tp.Record{
@@ -311,7 +311,7 @@ func TestNewAggregatorRunner_RunWithCampaignStrategyAndCancelEvent(t *testing.T)
 		&s.WaitGroup{},
 		tp.NewRecordChannel(0),
 		tp.NewAggregatorChannel(0),
-		campaign_aggregator_strategy.NewCampaignAggregatorStrategy(),
+		campaign.NewCampaignAggregatorStrategy(),
 	}
 	// Prepare records and expected aggregated data
 	records := []*tp.Record{

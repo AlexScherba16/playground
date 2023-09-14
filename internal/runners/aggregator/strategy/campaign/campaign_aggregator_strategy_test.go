@@ -1,4 +1,4 @@
-package country_aggregator_strategy
+package campaign
 
 import (
 	tp "playground/internal/types"
@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestNewCountryAggregatorStrategy(t *testing.T) {
+func TestNewCampaignAggregatorStrategy(t *testing.T) {
 	/* ARRANGE */
 	// Prepare records and expected aggregated data
 	records := []*tp.Record{
@@ -16,22 +16,22 @@ func TestNewCountryAggregatorStrategy(t *testing.T) {
 	}
 	expectedAggregatedData := []*tp.AggregatedData{}
 	for _, record := range records {
-		agg := tp.NewAggregatedData(record.Country(), record.Ltv())
+		agg := tp.NewAggregatedData(record.CampaignId(), record.Ltv())
 		expectedAggregatedData = append(expectedAggregatedData, agg)
 	}
-	strategy := NewCountryAggregatorStrategy()
+	strategy := NewCampaignAggregatorStrategy()
 
 	/* ACT */
-	expectedStrategy := reflect.ValueOf(countryAggregatorStrategy).Pointer()
+	expectedStrategy := reflect.ValueOf(campaignAggregatorStrategy).Pointer()
 
 	/* ASSERT */
 	if reflect.ValueOf(strategy).Pointer() != expectedStrategy {
-		t.Fatalf("NewCountryAggregatorStrategy() exp: %+v\ngot: %+v", expectedStrategy, strategy)
+		t.Fatalf("NewCampaignAggregatorStrategy() exp: %+v\ngot: %+v", expectedStrategy, strategy)
 	}
 	for i, data := range records {
 		aggregatedResult := strategy(data)
 		if !reflect.DeepEqual(expectedAggregatedData[i], aggregatedResult) {
-			t.Fatalf("NewCountryAggregatorStrategy() exp: %+v\ngot: %+v",
+			t.Fatalf("NewCampaignAggregatorStrategy() exp: %+v\ngot: %+v",
 				expectedAggregatedData[i], aggregatedResult)
 		}
 	}

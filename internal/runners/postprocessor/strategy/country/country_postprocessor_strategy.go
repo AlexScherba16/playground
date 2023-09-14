@@ -1,4 +1,4 @@
-package country_postprocessor_strategy
+package country
 
 import (
 	"fmt"

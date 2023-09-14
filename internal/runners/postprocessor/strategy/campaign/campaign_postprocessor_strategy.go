@@ -1,4 +1,4 @@
-package campaign_postprocessor_strategy
+package campaign
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package datasource
+package datasource_factory
 
 import (
 	"context"
@@ -77,17 +77,17 @@ func TestNewDataSource(t *testing.T) {
 			errorCh := types.NewErrorChannel(0)
 
 			/* ACT */
-			_, err := NewDataSource(ctx, wg, testCase.filePath, recordCh, errorCh)
+			_, err := NewRunner(ctx, wg, testCase.filePath, recordCh, errorCh)
 
 			/* ASSERT */
 			// Assert expected error string
 			if (err != nil) && (err.Error() != testCase.errorStr) {
-				t.Fatalf("NewDataSource() : expected error string [%s], got [%s]", testCase.errorStr, err.Error())
+				t.Fatalf("NewRunner() : expected error string [%s], got [%s]", testCase.errorStr, err.Error())
 			}
 
 			// Assert expected error
 			if (err != nil) != testCase.expectedError {
-				t.Fatalf("NewDataSource() : expected error %v, got %v", testCase.expectedError, err != nil)
+				t.Fatalf("NewRunner() : expected error %v, got %v", testCase.expectedError, err != nil)
 			}
 		})
 	}
