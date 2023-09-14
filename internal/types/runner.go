@@ -2,6 +2,10 @@ package types
 
 import "sync"
 
+// AggregatorStrategy strategy for Record data aggregation algorithm
+type AggregatorStrategy func(record *Record) *AggregatedData
+
+// PredictWorkerStrategy strategy for data prediction algorithm
 type PredictWorkerStrategy func(
 	wg *sync.WaitGroup,
 	key string,

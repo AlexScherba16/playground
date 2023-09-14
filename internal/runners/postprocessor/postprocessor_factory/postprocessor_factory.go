@@ -5,8 +5,8 @@ import (
 	cnst "playground/internal/constants"
 	"playground/internal/runners/common"
 	"playground/internal/runners/postprocessor/runner"
-	"playground/internal/runners/postprocessor/strategy/campaign_postprocessor_strategy"
-	"playground/internal/runners/postprocessor/strategy/country_postprocessor_strategy"
+	"playground/internal/runners/postprocessor/strategy/campaign"
+	"playground/internal/runners/postprocessor/strategy/country"
 	t "playground/internal/types"
 	"playground/internal/utils/cerror"
 	"sync"
@@ -24,10 +24,10 @@ func NewRunner(
 	switch aggregate {
 	case cnst.AggregateCountry:
 		return runner.NewPostProcessorRunner(wg, predictCh, postCh,
-			country_postprocessor_strategy.NewPostProcessorStrategy())
+			country.NewPostProcessorStrategy())
 	case cnst.AggregateCampaign:
 		return runner.NewPostProcessorRunner(wg, predictCh, postCh,
-			campaign_postprocessor_strategy.NewPostProcessorStrategy())
+			campaign.NewPostProcessorStrategy())
 	default:
 		return nil, cerror.NewCustomError(fmt.Sprintf("%q invalid postprocessor parameter", aggregate))
 	}

@@ -13,8 +13,8 @@ import (
 	"sync"
 )
 
-// csvDataSource represents a data source backed by a CSV file
-type csvDataSource struct {
+// csvDataSourceRunner represents a data source runner backed by a CSV file
+type csvDataSourceRunner struct {
 	ctx         context.Context
 	wg          *sync.WaitGroup
 	csvFilePath string
@@ -22,14 +22,14 @@ type csvDataSource struct {
 	errorCh     t.ErrorChannel
 }
 
-// NewDataSource initializes and returns csvDataSource
-// Returns error if some of ctx, wg, recordCh is nil, or open file failure
-func NewDataSource(
+// NewDataSourceRunner initializes and returns csvDataSourceRunner
+// Returns error if some of ctx, wg, recordCh, errorCh is nil
+func NewDataSourceRunner(
 	ctx context.Context,
 	wg *sync.WaitGroup,
 	filePath string,
 	recordCh t.RecordChannel,
-	errorCh t.ErrorChannel) (*csvDataSource, error) {
+	errorCh t.ErrorChannel) (*csvDataSourceRunner, error) {
 
 	// Validate parameters
 	if ctx == nil {
@@ -45,7 +45,7 @@ func NewDataSource(
 		return nil, cerror.NewCustomError("invalid error channel")
 	}
 
-	return &csvDataSource{
+	return &csvDataSourceRunner{
 		ctx:         ctx,
 		wg:          wg,
 		csvFilePath: filePath,
@@ -55,7 +55,7 @@ func NewDataSource(
 }
 
 // Run interface implementation, related to CSV file specific
-func (r *csvDataSource) Run() {
+func (r *csvDataSourceRunner) Run() {
 	go func() {
 		defer r.wg.Done()
 		defer close(r.recordCh)

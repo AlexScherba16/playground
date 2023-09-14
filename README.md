@@ -31,17 +31,28 @@ Well, that's it. Cool, right?🤓 You can continue reading 👇
 * * [cli](internal/cli) - cli parser entity and tests
 * * [constants](internal/constants) - project constant variables
 * * [runners/](internal/runners) - runners are entities that operate as goroutines in a data processing pipeline
-* * * [aggregator/](internal/runners/aggregator) - data aggregator runners backed by an provided aggregation parameter
-* * * * [campaign](internal/runners/aggregator/campaign) - campaign data aggregator runner implementation and tests
-* * * * [country](internal/runners/aggregator/country) - country data aggregator runner implementation and tests
+* * * [aggregator/](internal/runners/aggregator) - data aggregator runners backed by a provided aggregation parameter
+* * * * [aggregator_factory](internal/runners/aggregator/aggregator_factory) - aggregator runner creator and tests
+* * * * [runner](internal/runners/aggregator/runner) - aggregator runner implementation and tests
+* * * * [strategy/](internal/runners/aggregator/strategy) - data aggregation algorithms and tests
+* * * * * [campaign](internal/runners/aggregator/strategy/campaign) - campaign data aggregation algorithm and tests
+* * * * * [country](internal/runners/aggregator/strategy/country) - country data aggregation algorithm and tests
 * * * [common](internal/runners/common) - common runners interface
-* * * [datasource/](internal/runners/datasource) - data pipeline entry point, it provides records(raw data) to other runners
-* * * * [csv](internal/runners/datasource/csv) - csv file runner implementation and tests
-* * * * [json](internal/runners/datasource/json) - json file runner implementation and tests
+* * * [datasource/](internal/runners/datasource) - data pipeline entry point, runners provide records(raw data) to other runners
+* * * * [datasource_factory](internal/runners/datasource/datasource_factory) - datasource runner creator and tests
+* * * * [runner/](internal/runners/datasource/runner) - datasource runners implementation
+* * * * * [csv](internal/runners/datasource/runner/csv) - csv file runner implementation and tests
+* * * * * [json](internal/runners/datasource/runner/json) - json file runner implementation and tests
+* * * [postprocessor/](internal/runners/postprocessor) - final part of data pipeline, prepares predicted data to console output
+* * * * [postprocessor_factory](internal/runners/postprocessor/postprocessor_factory) - postprocessor runner creator and tests
+* * * * [runner](internal/runners/postprocessor/postprocessor_factory) - postprocessor runner creator and tests
+* * * * [strategy/](internal/runners/postprocessor/strategy) - postprocessor algorithms and tests
+* * * * * [campaign](internal/runners/postprocessor/strategy/campaign) - campaign data postprocessor algorithm and tests
+* * * * * [country](internal/runners/postprocessor/strategy/country) - country data postprocessor algorithm and tests
 * * * [predictor/](internal/runners/predictor) - data predictor runners backed by a provided model parameter
 * * * * [predictor_factory](internal/runners/predictor/predictor_factory) - predictor runner creator and tests
 * * * * [runner](internal/runners/predictor/runner) - predictor runner implementation and tests
-* * * * [strategy/](internal/runners/predictor/strategy) - predictor data algorithms (strategy)
+* * * * [strategy/](internal/runners/predictor/strategy) - predictor data algorithms
 * * * * * [linext](internal/runners/predictor/strategy/linext) - linear extrapolation data predictor and tests
 * * * * * [average](internal/runners/predictor/strategy/average) - average data predictor and tests
 * [types](internal/types) - structures and channels types for internal usage across the project
@@ -50,7 +61,14 @@ Well, that's it. Cool, right?🤓 You can continue reading 👇
 * * * [parser](internal/utils/parser) - files data parser, converts file lines to records
 * * * [predictor](internal/utils/predictor) - predictor algorithms util functions, math stuff
 
-## 🏗 Build & Run
+## 🏗 Setup & Run
+``` 
+git clone https://github.com/AlexScherba16/playground
+cd playground
+go run cmd/playground/main.go -source docs/testdata/test_data.csv -model linext -aggregate country
+
+Enjoy 😉
+```
 
 ## 📱 Contacts
 ``` 

@@ -1,4 +1,4 @@
-package campaign_postprocessor_strategy
+package country
 
 import (
 	"fmt"
@@ -17,12 +17,12 @@ func TestNewPostProcessorStrategy(t *testing.T) {
 	expectedPostProcData := []string{}
 	for _, data := range predictedData {
 		expectedPostProcData = append(expectedPostProcData,
-			fmt.Sprintf("<%s>: %.2f", data.Key(), data.Predicted()))
+			fmt.Sprintf("%s: %.2f", data.Key(), data.Predicted()))
 	}
 	strategy := NewPostProcessorStrategy()
 
 	/* ACT */
-	expectedStrategy := reflect.ValueOf(campaignPostProcessor).Pointer()
+	expectedStrategy := reflect.ValueOf(countryPostProcessor).Pointer()
 
 	/* ASSERT */
 	if reflect.ValueOf(strategy).Pointer() != expectedStrategy {

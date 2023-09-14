@@ -1,4 +1,4 @@
-package aggregator
+package aggregator_factory
 
 import (
 	"fmt"
@@ -45,17 +45,17 @@ func TestNewAggregator(t *testing.T) {
 			aggregateCh := types.NewAggregatorChannel(0)
 
 			/* ACT */
-			_, err := NewAggregator(wg, testCase.aggregate, recordCh, aggregateCh)
+			_, err := NewRunner(wg, testCase.aggregate, recordCh, aggregateCh)
 
 			/* ASSERT */
 			// Assert expected error string
 			if (err != nil) && (err.Error() != testCase.errorStr) {
-				t.Fatalf("NewAggregator() : expected error string [%s], got [%s]", testCase.errorStr, err.Error())
+				t.Fatalf("NewRunner() : expected error string [%s], got [%s]", testCase.errorStr, err.Error())
 			}
 
 			// Assert expected error
 			if (err != nil) != testCase.expectedError {
-				t.Fatalf("NewAggregator() : expected error %v, got %v", testCase.expectedError, err != nil)
+				t.Fatalf("NewRunner() : expected error %v, got %v", testCase.expectedError, err != nil)
 			}
 		})
 	}
