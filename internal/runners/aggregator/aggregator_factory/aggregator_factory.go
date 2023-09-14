@@ -11,9 +11,9 @@ import (
 	"sync"
 )
 
-// NewAggregator creates a new data aggregator runner to aggregate records
+// NewRunner creates a new data aggregator runner to aggregate records
 // According to aggregator parameter
-func NewAggregator(
+func NewRunner(
 	wg *sync.WaitGroup,
 	aggregate string,
 	recordCh t.RecordChannel,

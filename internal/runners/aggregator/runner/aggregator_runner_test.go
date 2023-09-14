@@ -16,10 +16,10 @@ const (
 )
 
 type inputParameters struct {
-	wg        *s.WaitGroup
-	aggregate string
-	rCh       tp.RecordChannel
-	aCh       tp.AggregatorChannel
+	wg       *s.WaitGroup
+	rCh      tp.RecordChannel
+	aCh      tp.AggregatorChannel
+	strategy tp.AggregatorStrategy
 }
 
 type newAggregatorResult struct {
