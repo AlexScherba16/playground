@@ -32,20 +32,30 @@ func NewPredictorChannel(predictBuffer uint) PredictorChannel {
 	return make(PredictorChannel, predictBuffer)
 }
 
+// PostProcessorChannel is a channel type for prepared for output strings
+type PostProcessorChannel chan string
+
+// NewPostProcessorChannel initializes and returns PostProcessorChannel with a buffer size
+func NewPostProcessorChannel(postProcessorBuffer uint) PostProcessorChannel {
+	return make(PostProcessorChannel, postProcessorBuffer)
+}
+
 // Channels is channel container util
 type Channels struct {
 	RecordCh    RecordChannel
 	ErrorCh     ErrorChannel
 	AggregateCh AggregatorChannel
 	PredictCh   PredictorChannel
+	PostProcCh  PostProcessorChannel
 }
 
 // NewChannels initializes and returns a Channels structure
-func NewChannels(recordsBuffer, errorsBuffer, aggregateBuffer, predictBuffer uint) *Channels {
+func NewChannels(recordsBuffer, errorsBuffer, aggregateBuffer, predictBuffer, postProcBuffer uint) *Channels {
 	return &Channels{
 		RecordCh:    NewRecordChannel(recordsBuffer),
 		ErrorCh:     NewErrorChannel(errorsBuffer),
 		AggregateCh: NewAggregatorChannel(aggregateBuffer),
 		PredictCh:   NewPredictorChannel(predictBuffer),
+		PostProcCh:  NewPostProcessorChannel(postProcBuffer),
 	}
 }

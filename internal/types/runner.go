@@ -7,3 +7,6 @@ type PredictWorkerStrategy func(
 	key string,
 	inCh AggregatorChannel,
 	outCh PredictorChannel)
+
+// PostProcessorStrategy strategy for PredictedData to string conversion algorithm
+type PostProcessorStrategy func(predictedData *PredictedData) string

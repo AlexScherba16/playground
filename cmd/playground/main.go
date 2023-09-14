@@ -2,11 +2,14 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"playground/internal/cli"
 	cnst "playground/internal/constants"
 	"playground/internal/runners/aggregator"
+	"playground/internal/runners/common"
 	"playground/internal/runners/datasource"
+	postprocessor "playground/internal/runners/postprocessor/postprocessor_factory"
 	"playground/internal/runners/predictor/predictor_factory"
 	"playground/internal/types"
 	"sync"
@@ -25,6 +28,7 @@ func main() {
 		cnst.ErrorChannelBuffer,
 		cnst.AggregateChannelBuffer,
 		cnst.PredictChannelBuffer,
+		cnst.PostProcessorChannelBuffer,
 	)
 
 	// Prepare input params
@@ -49,9 +53,50 @@ func main() {
 		log.Fatalln(err.Error())
 	}
 
-	// Suppress unused variables, only for now, I promise )
-	_ = cancel
-	_ = sourceRunner
-	_ = aggregatorRunner
-	_ = predictorRunner
+	// Create postprocessor runner
+	postProcessorRunner, err := postprocessor.NewRunner(wg, flags.Aggregate(), ch.PredictCh, ch.PostProcCh)
+	if err != nil {
+		log.Fatalln(err.Error())
+	}
+	runners := []common.IRunner{
+		sourceRunner,
+		aggregatorRunner,
+		predictorRunner,
+		postProcessorRunner,
+	}
+
+	// Set wait group and launch runners
+	wg.Add(len(runners))
+	for _, runner := range runners {
+		go runner.Run()
+	}
+
+	for {
+		select {
+		// Something went wrong, shutdown runners and show error message
+		case err, ok := <-ch.ErrorCh:
+			if ok {
+				cancel()
+				wg.Wait()
+				log.Fatalln(err)
+			} else {
+				ch.ErrorCh = nil
+			}
+			// Read and print result
+		case result, ok := <-ch.PostProcCh:
+			if ok {
+				fmt.Println(result)
+			} else {
+				return
+			}
+
+			// Simulate cancel event
+			//case <-time.After(2 * time.Millisecond):
+			//	log.Info("cancel )")
+			//	cancel()
+			//	wg.Wait()
+			//	log.Info("application finished")
+			//	return
+		}
+	}
 }

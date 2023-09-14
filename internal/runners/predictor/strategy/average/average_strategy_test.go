@@ -109,9 +109,9 @@ func TestAverageWorker_RunWorkerWithCancelEvent(t *testing.T) {
 		select {
 		// Assert goroutines num
 		case <-time.After(1 * time.Second):
-			// linearExtrapolationWorker has no ability to notify about "Ok, I'm stopped"
+			// averageWorker has no ability to notify about "Ok, I'm stopped"
 			// It's better to reimplement worker, but time has pressure )
-			// TODO: reimplement linearExtrapolationWorker, it should provide clear stopping notification
+			// TODO: reimplement averageWorker, it should provide clear stopping notification
 
 			result := runtime.NumGoroutine()
 			if result != expected {
