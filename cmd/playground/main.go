@@ -3,17 +3,21 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 	"playground/internal/cli"
 	cnst "playground/internal/constants"
 	"playground/internal/runners/aggregator/aggregator_factory"
 	"playground/internal/runners/common"
-	"playground/internal/runners/datasource"
-	postprocessor "playground/internal/runners/postprocessor/postprocessor_factory"
+	"playground/internal/runners/datasource/datasource_factory"
+	"playground/internal/runners/postprocessor/postprocessor_factory"
 	"playground/internal/runners/predictor/predictor_factory"
 	"playground/internal/types"
 	"sync"
 )
+
+func init() {
+	log.SetLevel(log.WarnLevel)
+}
 
 func main() {
 	// Get parsed user input flags
@@ -36,7 +40,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	// Create datasource runner (Pipeline entry point)
-	sourceRunner, err := datasource.NewDataSource(ctx, wg, flags.Source(), ch.RecordCh, ch.ErrorCh)
+	sourceRunner, err := datasource_factory.NewRunner(ctx, wg, flags.Source(), ch.RecordCh, ch.ErrorCh)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
@@ -54,7 +58,7 @@ func main() {
 	}
 
 	// Create postprocessor runner
-	postProcessorRunner, err := postprocessor.NewRunner(wg, flags.Aggregate(), ch.PredictCh, ch.PostProcCh)
+	postProcessorRunner, err := postprocessor_factory.NewRunner(wg, flags.Aggregate(), ch.PredictCh, ch.PostProcCh)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
