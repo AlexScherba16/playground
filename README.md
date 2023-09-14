@@ -2,10 +2,11 @@
 
 ![](./docs/media/logo.png)
 <!-- TOC -->
-* [📖 General info](#-general-info)
+
+* [📖 What's it all about?](#-whats-it-all-about)
 * [💻 System requirements](#-system-requirements)
 * [🏛️ Source code structure](#-source-code-structure)
-* [⚙️ Build & Run](#-build--run)
+* [🏗 Build & Run](#-build--run)
 * [📱 Contacts](#-contacts)
 <!-- TOC -->
 
@@ -21,23 +22,33 @@ Well, that's it. Cool, right?🤓 You can continue reading 👇
 
 ## 🏛️ Source code structure
 * [cmd/](cmd) - application entry points directory
-* * [cmd/playground](cmd/playground) - entry point for the "playground" executable
+* * [playground](cmd/playground) - entry point for the "playground" executable
 * [docs/](docs) - documentation-related files for the project
-* * [docs/license](docs/license) - project license agreement
-* * [docs/media](docs/media) - project images
-* * [docs/testdata](docs/testdata) - data samples used for demo and tests
+* * [license](docs/license) - project license agreement
+* * [media](docs/media) - project images
+* * [testdata](docs/testdata) - data samples used for demo and tests
 * [internal/](internal) - internal packages that are not intended for external use
-* * [internal/cli](internal/cli) - cli parser entity and tests
-* * [internal/constants](internal/constants) - project constant variables
-* * [internal/runners](internal/runners) - runners are entities that operate as goroutines in a data processing pipeline
-* * * [internal/runners/common](internal/runners/common) - common runners interface
-* * * [internal/runners/datasource](internal/runners/datasource) - data pipeline entry point, it provides records(raw data) to other runners
-* * * * [internal/runners/datasource/csv](internal/runners/datasource/csv) - csv file runner implementation and tests
-* * * * [internal/runners/datasource/json](internal/runners/datasource/json) - json file runner implementation and tests
-* [internal/types](internal/types) - structures and channels types for internal usage across the project
-* * [internal/utils](internal/utils) - utility functions and helpers for internal usage across the project
-* * * [internal/utils/cerror](internal/utils/cerror) - custom error handler, provides common error message template
-* * * [internal/utils/parser](internal/utils/parser) - files data parser, converts file lines to records
+* * [cli](internal/cli) - cli parser entity and tests
+* * [constants](internal/constants) - project constant variables
+* * [runners/](internal/runners) - runners are entities that operate as goroutines in a data processing pipeline
+* * * [aggregator/](internal/runners/aggregator) - data aggregator runners backed by an provided aggregation parameter
+* * * * [campaign](internal/runners/aggregator/campaign) - campaign data aggregator runner implementation and tests
+* * * * [country](internal/runners/aggregator/country) - country data aggregator runner implementation and tests
+* * * [common](internal/runners/common) - common runners interface
+* * * [datasource/](internal/runners/datasource) - data pipeline entry point, it provides records(raw data) to other runners
+* * * * [csv](internal/runners/datasource/csv) - csv file runner implementation and tests
+* * * * [json](internal/runners/datasource/json) - json file runner implementation and tests
+* * * [predictor/](internal/runners/predictor) - data predictor runners backed by a provided model parameter
+* * * * [predictor_factory](internal/runners/predictor/predictor_factory) - predictor runner creator and tests
+* * * * [runner](internal/runners/predictor/runner) - predictor runner implementation and tests
+* * * * [strategy/](internal/runners/predictor/strategy) - predictor data algorithms (strategy)
+* * * * * [linext](internal/runners/predictor/strategy/linext) - linear extrapolation data predictor and tests
+* * * * * [average](internal/runners/predictor/strategy/average) - average data predictor and tests
+* [types](internal/types) - structures and channels types for internal usage across the project
+* * [utils/](internal/utils) - utility functions and helpers for internal usage across the project
+* * * [cerror](internal/utils/cerror) - custom error handler, provides common error message template
+* * * [parser](internal/utils/parser) - files data parser, converts file lines to records
+* * * [predictor](internal/utils/predictor) - predictor algorithms util functions, math stuff
 
 ## 🏗 Build & Run
 

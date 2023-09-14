@@ -7,7 +7,7 @@ import (
 	cnst "playground/internal/constants"
 	"playground/internal/runners/aggregator"
 	"playground/internal/runners/datasource"
-	"playground/internal/runners/predictor"
+	"playground/internal/runners/predictor/predictor_factory"
 	"playground/internal/types"
 	"sync"
 )
@@ -44,7 +44,7 @@ func main() {
 	}
 
 	// Create predictor runner
-	predictorRunner, err := predictor.NewPredictor(wg, flags.Model(), ch.AggregateCh, ch.PredictCh)
+	predictorRunner, err := predictor_factory.NewRunner(wg, flags.Model(), ch.AggregateCh, ch.PredictCh)
 	if err != nil {
 		log.Fatalln(err.Error())
 	}
