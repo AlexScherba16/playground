@@ -42,7 +42,7 @@ func TestNewAggregator(t *testing.T) {
 			// Prepare input parameters
 			wg := &sync.WaitGroup{}
 			recordCh := types.NewRecordChannel(0)
-			aggregateCh := types.NewAggregateChannel(0)
+			aggregateCh := types.NewAggregatorChannel(0)
 
 			/* ACT */
 			_, err := NewAggregator(wg, testCase.aggregate, recordCh, aggregateCh)

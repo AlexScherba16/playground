@@ -16,28 +16,28 @@ func NewErrorChannel(errorsBuffer uint) ErrorChannel {
 	return make(ErrorChannel, errorsBuffer)
 }
 
-// AggregateChannel is a channel type for transmitting AggregatedData instances
-type AggregateChannel chan *AggregatedData
+// AggregatorChannel is a channel type for transmitting AggregatedData instances
+type AggregatorChannel chan *AggregatedData
 
-// NewAggregateChannel initializes and returns AggregateChannel with a buffer size
-func NewAggregateChannel(aggregatedBuffer uint) AggregateChannel {
-	return make(AggregateChannel, aggregatedBuffer)
+// NewAggregatorChannel initializes and returns AggregatorChannel with a buffer size
+func NewAggregatorChannel(aggregatedBuffer uint) AggregatorChannel {
+	return make(AggregatorChannel, aggregatedBuffer)
 }
 
-// PredictChannel is a channel type for transmitting PredictedData instances
-type PredictChannel chan *PredictedData
+// PredictorChannel is a channel type for transmitting PredictedData instances
+type PredictorChannel chan *PredictedData
 
-// NewPredictChannel initializes and returns PredictChannel with a buffer size
-func NewPredictChannel(predictBuffer uint) PredictChannel {
-	return make(PredictChannel, predictBuffer)
+// NewPredictorChannel initializes and returns PredictorChannel with a buffer size
+func NewPredictorChannel(predictBuffer uint) PredictorChannel {
+	return make(PredictorChannel, predictBuffer)
 }
 
 // Channels is channel container util
 type Channels struct {
 	RecordCh    RecordChannel
 	ErrorCh     ErrorChannel
-	AggregateCh AggregateChannel
-	PredictCh   PredictChannel
+	AggregateCh AggregatorChannel
+	PredictCh   PredictorChannel
 }
 
 // NewChannels initializes and returns a Channels structure
@@ -45,7 +45,7 @@ func NewChannels(recordsBuffer, errorsBuffer, aggregateBuffer, predictBuffer uin
 	return &Channels{
 		RecordCh:    NewRecordChannel(recordsBuffer),
 		ErrorCh:     NewErrorChannel(errorsBuffer),
-		AggregateCh: NewAggregateChannel(aggregateBuffer),
-		PredictCh:   NewPredictChannel(predictBuffer),
+		AggregateCh: NewAggregatorChannel(aggregateBuffer),
+		PredictCh:   NewPredictorChannel(predictBuffer),
 	}
 }

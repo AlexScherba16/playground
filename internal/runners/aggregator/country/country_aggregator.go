@@ -15,7 +15,7 @@ type countryAggregator struct {
 	wg           *sync.WaitGroup
 	aggregate    string
 	recordCh     t.RecordChannel
-	aggregatedCh t.AggregateChannel
+	aggregatedCh t.AggregatorChannel
 }
 
 // NewAggregator initializes and returns countryAggregator
@@ -24,7 +24,7 @@ func NewAggregator(
 	wg *sync.WaitGroup,
 	aggregate string,
 	recordCh t.RecordChannel,
-	aggregateCh t.AggregateChannel) (*countryAggregator, error) {
+	aggregateCh t.AggregatorChannel) (*countryAggregator, error) {
 
 	if wg == nil {
 		return nil, cerror.NewCustomError("invalid wait group")

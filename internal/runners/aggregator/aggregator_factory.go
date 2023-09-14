@@ -17,7 +17,7 @@ func NewAggregator(
 	wg *sync.WaitGroup,
 	aggregate string,
 	recordCh t.RecordChannel,
-	aggregateCh t.AggregateChannel) (common.IRunner, error) {
+	aggregateCh t.AggregatorChannel) (common.IRunner, error) {
 
 	// General Factory logic, create data aggregator according to aggregate parameter
 	switch aggregate {

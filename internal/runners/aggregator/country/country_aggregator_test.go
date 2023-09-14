@@ -19,7 +19,7 @@ type inputParameters struct {
 	wg        *s.WaitGroup
 	aggregate string
 	rCh       tp.RecordChannel
-	aCh       tp.AggregateChannel
+	aCh       tp.AggregatorChannel
 }
 
 type newAggregatorResult struct {
@@ -36,20 +36,20 @@ func TestNewAggregator_InvalidInputParams(t *testing.T) {
 	}{
 		{
 			name:           "noWaitGroup",
-			input:          inputParameters{nil, "", tp.NewRecordChannel(0), tp.NewAggregateChannel(0)},
+			input:          inputParameters{nil, "", tp.NewRecordChannel(0), tp.NewAggregatorChannel(0)},
 			expectedResult: newAggregatorResult{aggregator: nil, err: cerror.NewCustomError("invalid wait group")},
 			expectedError:  true,
 		},
 		{
 			name:  "invalidAggregateParam",
-			input: inputParameters{&s.WaitGroup{}, InvalidCountryAggregateParameter, tp.NewRecordChannel(0), tp.NewAggregateChannel(0)},
+			input: inputParameters{&s.WaitGroup{}, InvalidCountryAggregateParameter, tp.NewRecordChannel(0), tp.NewAggregatorChannel(0)},
 			expectedResult: newAggregatorResult{aggregator: nil, err: cerror.NewCustomError(fmt.Sprintf("%q should be provided as an aggregate parameter, not %q",
 				cnst.AggregateCountry, InvalidCountryAggregateParameter))},
 			expectedError: true,
 		},
 		{
 			name:           "noRecordChannel",
-			input:          inputParameters{&s.WaitGroup{}, cnst.AggregateCountry, nil, tp.NewAggregateChannel(0)},
+			input:          inputParameters{&s.WaitGroup{}, cnst.AggregateCountry, nil, tp.NewAggregatorChannel(0)},
 			expectedResult: newAggregatorResult{aggregator: nil, err: cerror.NewCustomError("invalid record channel")},
 			expectedError:  true,
 		},
@@ -96,7 +96,7 @@ func TestNewAggregator_ValidInputParams(t *testing.T) {
 		&s.WaitGroup{},
 		cnst.AggregateCountry,
 		tp.NewRecordChannel(0),
-		tp.NewAggregateChannel(0),
+		tp.NewAggregatorChannel(0),
 	}
 
 	/* ACT */
@@ -118,7 +118,7 @@ func TestNewAggregator_RunReadRecordsChannel(t *testing.T) {
 		&s.WaitGroup{},
 		cnst.AggregateCountry,
 		tp.NewRecordChannel(0),
-		tp.NewAggregateChannel(0),
+		tp.NewAggregatorChannel(0),
 	}
 	// Prepare records and expected aggregated data
 	records := []*tp.Record{
@@ -180,7 +180,7 @@ func TestNewAggregator_RunReadCancelEventFromRecordsChannel(t *testing.T) {
 		&s.WaitGroup{},
 		cnst.AggregateCountry,
 		tp.NewRecordChannel(0),
-		tp.NewAggregateChannel(0),
+		tp.NewAggregatorChannel(0),
 	}
 	// Prepare records and expected aggregated data
 	records := []*tp.Record{

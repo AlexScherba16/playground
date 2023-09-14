@@ -60,7 +60,8 @@ func NewFlags() (cliParams, error) {
 	cmd := cliParams{}
 
 	flag.StringVar(&cmd.model, cnst.CliModelParam, "",
-		fmt.Sprintf("The prediction method to use, example: [%s]", cnst.LinearExtrapolationPredictorModel))
+		fmt.Sprintf("The prediction method to use, example: [%s, %s]",
+			cnst.LinearExtrapolationPredictorModel, cnst.AveragePredictorModel))
 
 	flag.StringVar(&cmd.source, cnst.CliSourceParam, "", "Path to the data source file")
 

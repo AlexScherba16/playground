@@ -15,7 +15,7 @@ type campaignAggregator struct {
 	wg          *sync.WaitGroup
 	aggregate   string
 	recordCh    t.RecordChannel
-	aggregateCh t.AggregateChannel
+	aggregateCh t.AggregatorChannel
 }
 
 // NewAggregator initializes and returns campaignAggregator
@@ -24,7 +24,7 @@ func NewAggregator(
 	wg *sync.WaitGroup,
 	aggregate string,
 	recordCh t.RecordChannel,
-	aggregateCh t.AggregateChannel) (*campaignAggregator, error) {
+	aggregateCh t.AggregatorChannel) (*campaignAggregator, error) {
 
 	if wg == nil {
 		return nil, cerror.NewCustomError("invalid wait group")
